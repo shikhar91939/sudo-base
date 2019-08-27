@@ -1,20 +1,11 @@
 {
   "name": "sudo-base",
-  "version": "0.1.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "version": "1.0.0",
+  "license": "MIT",
+  "bin": {
+    "qb": "bin/qb"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/shikhar91939/sudo-base.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/shikhar91939/sudo-base/issues"
-  },
-  "homepage": "https://github.com/shikhar91939/sudo-base#readme"
+  "scripts": {},
+  "devDependencies": {},
+  "dependencies": {}
 }
