@@ -5,6 +5,7 @@ const parseString = require('xml2js').parseString;
 const os = require('os');
 const osName = require('os-name');
 const fs = require('fs');
+const TICKET_FILENAME= '.qb-ticket';
 
 const realmQues = {
     name: 'realm',
@@ -22,7 +23,7 @@ const passQues = {
 }
 
 module.exports = async () => {
-    saveTicket('hellllooooo');
+    saveTicket('hello, ticket. ?!');
     console.log('To use Quick Base, please login with your realm, username and password');
     const loginData = await inquirer.prompt([realmQues, usernameQues, passQues]);
     const response = await login(loginData);
@@ -48,9 +49,8 @@ const handleLogin = (response) => {
 }
 
 const showLoginError = (tags) => {
-    console.log('tags:', tags);
-    console.log('error code:', tags.errcode);
-    console.log('error text:', tags.errtext);
+    console.log('error code:', tags.errcode[0]);
+    console.log('error text:', tags.errtext[0]);
 }
 
 const onSuccessfulLogin = (tags)=> {
@@ -65,16 +65,29 @@ const onSuccessfulLogin = (tags)=> {
 }
 
 const saveTicket = (ticket) => {
-    const path = '/';
+    const path = os.homedir()+'/'+TICKET_FILENAME;
+    console.log(path);
     try {
         if (fs.existsSync(path)) {
-            console.log('exists');
+            console.log('.qb-ticket exists. overwriting');
+            writeFile(path, ticket);
         } else {
-            console.log("doesn't exist");
+            console.log("doesn't exist. creating file");
+            writeFile(path, ticket);
         }
       } catch(err) {
         console.error(err)
       }
+}
+
+const writeFile = (path, data) => {
+    try {
+        fs.writeFile(path, data, () => {
+            console.log('file created');
+        });
+     } catch (err) {
+          console.log('error during writing file:', err);
+     }
 }
 
 const login = async (loginData) => {
