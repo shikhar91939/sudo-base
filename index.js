@@ -1,118 +1,22 @@
-const inquirer = require('inquirer');
-const axois = require('axios');
-const querystring = require('querystring'); // move to 'only when needed'
-const parseString = require('xml2js').parseString;
-const os = require('os');
-const osName = require('os-name');
-const fs = require('fs');
-const TICKET_FILENAME= '.qb-ticket';
+const minimist = require('minimist');
 
-const realmQues = {
-    name: 'realm',
-    message: 'realm:',
-};
-const usernameQues = {
-    name: 'username',
-    message: 'username:',
-}
-const passQues = {
-    type: 'password',
-    name: 'password',
-    message: 'password:',
-    mask: '',
-}
 
 module.exports = async () => {
-    saveTicket('hello, ticket. ?!');
-    console.log('To use Quick Base, please login with your realm, username and password');
-    const loginData = await inquirer.prompt([realmQues, usernameQues, passQues]);
-    const response = await login(loginData);
-    handleLogin(response);
-}
-
-const handleLogin = (response) => {
-    // console.log('response.headers:', response.headers);
-    // console.log('response.data:', response.data);
-    var tags = null;
-    parseString(response.data, (err, result) => {
-        // console.log('result:', result);
-        if (err) console.log('err:', err);
-        tags = result;
-    })
-    if(tags.qdbapi.errcode[0] === '0'){
-        console.log('login successful');
-        onSuccessfulLogin(tags.qdbapi);
-    } else {
-        console.log('failed to login');
-        showLoginError(tags.qdbapi);
+    const args = minimist(process.argv.slice(2));
+    const cmd = args._[0];
+    switch(cmd){
+        case 'login':
+            require('./cmds/login')(args);
+            break;
+        case undefined:
+            console.log('To use Quick Base, please login with your realm, username and password');
+            require('./cmds/login')();//todo: if logged in, display username and pass. else ask to login
+            break;
+        case 'logout':
+            require('./cmds/logout')(args);
+            break;
+        default:
+            console.error(`"${cmd}" is not a valid command!`);
+            break;
     }
-}
-
-const showLoginError = (tags) => {
-    console.log('error code:', tags.errcode[0]);
-    console.log('error text:', tags.errtext[0]);
-}
-
-const onSuccessfulLogin = (tags)=> {
-    const ticket = tags.ticket[0];
-    console.log(ticket);
-    const operatingSys = osName();
-    if(operatingSys.startsWith('macOS')){
-        saveTicket(ticket);
-    } else {
-        console.log('Sorry, only macs are supported right now');
-    }
-}
-
-const saveTicket = (ticket) => {
-    const path = os.homedir()+'/'+TICKET_FILENAME;
-    console.log(path);
-    try {
-        if (fs.existsSync(path)) {
-            console.log('.qb-ticket exists. overwriting');
-            writeFile(path, ticket);
-        } else {
-            console.log("doesn't exist. creating file");
-            writeFile(path, ticket);
-        }
-      } catch(err) {
-        console.error(err)
-      }
-}
-
-const writeFile = (path, data) => {
-    try {
-        fs.writeFile(path, data, () => {
-            console.log('file created');
-        });
-     } catch (err) {
-          console.log('error during writing file:', err);
-     }
-}
-
-const login = async (loginData) => {
-    const url = 'https://'+loginData.realm+'.quickbase.com/db/main';
-    // const url = 'https://webhook.site/60fd4716-07cf-4ae6-b7d9-00865a46b782';
-    const headers = {
-        'QUICKBASE-ACTION': 'API_Authenticate',
-        'Content-Type': 'application/x-www-form-urlencoded',
-        Accept: 'application/json',
-    }
-    const credentials = {
-        username: loginData.username,
-        password: loginData.password,
-    }
-    return axois({
-        method: 'post',
-        url: url,
-        headers: headers,
-        data: querystring.stringify(credentials),
-    })
-    .then(onResponse = (response) => {
-        // console.log(response);
-        return response;
-    }).catch( (error) => {
-        console.log('error in login', error);
-        return null;
-    });
 }
