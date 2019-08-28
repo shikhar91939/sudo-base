@@ -32,7 +32,7 @@ module.exports = async (args) => {
 const handleLogin = (response) => {
     var tags = null;
     parseString(response.data, (err, result) => {
-        if (err) console.err('error while parsing login response:', err);
+        if (err) console.error('error while parsing login response:', err);
         tags = result;
     })
     if(tags.qdbapi.errcode[0] === '0'){
@@ -44,9 +44,9 @@ const handleLogin = (response) => {
 }
 
 const showLoginError = (tags) => {
-    console.err('failed to login');
-    console.err('error code:', tags.errcode[0]);
-    console.err('error text:', tags.errtext[0]);
+    console.error('failed to login');
+    console.error('error code:', tags.errcode[0]);
+    console.error('error text:', tags.errtext[0]);
 }
 
 const onSuccessfulLogin = (tags)=> {
@@ -55,7 +55,7 @@ const onSuccessfulLogin = (tags)=> {
     if(operatingSys.startsWith('macOS')){
         saveTicket(ticket);
     } else {
-        console.err('Sorry, only macs are supported right now');
+        console.error('Sorry, only macs are supported right now');
     }
 }
 
@@ -77,7 +77,7 @@ const writeFile = (path, data) => {
         fs.writeFile(path, data, () => {
         });
      } catch (err) {
-          console.err('error during writing file:', err);
+          console.error('error during writing file:', err);
      }
 }
 
@@ -102,7 +102,7 @@ const login = async (loginData) => {
     .then(onResponse = (response) => {
         return response;
     }).catch( (error) => {
-        console.err('error in login', error);
+        console.error('error in login', error);
         return null;
     });
 }

@@ -15,6 +15,9 @@ module.exports = async () => {
         case 'logout':
             require('./cmds/logout')(args);
             break;
+        case 'apps':
+            require('./cmds/apps')(args);
+            break;
         default:
             console.error(`"${cmd}" is not a valid command!`);
             break;
