@@ -2,7 +2,7 @@ const os = require('os');
 const fs = require('fs');
 const chalk = require('chalk');
 
-const TICKET_FILENAME= '.qb-ticket';
+const TICKET_FILENAME= '.quickbase';
 
 module.exports = async (args) => {
     const path = os.homedir()+'/'+TICKET_FILENAME;

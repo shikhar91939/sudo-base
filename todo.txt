@@ -1,0 +1,3 @@
+add spinner
+qb prompt should give username and password
+remove ticket only instead of deleting the .quickbase file

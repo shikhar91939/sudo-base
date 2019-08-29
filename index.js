@@ -5,12 +5,11 @@ module.exports = async () => {
     const args = minimist(process.argv.slice(2));
     const cmd = args._[0];
     switch(cmd){
+        case undefined:  // when we just enter 'qb'
+            require('./cmds/qb')();//todo: if logged in, display username and pass. else ask to login
+            break;
         case 'login':
             require('./cmds/login')(args);
-            break;
-        case undefined:
-            console.log('To use Quick Base, please login with your realm, username and password');
-            require('./cmds/login')();//todo: if logged in, display username and pass. else ask to login
             break;
         case 'logout':
             require('./cmds/logout')(args);
